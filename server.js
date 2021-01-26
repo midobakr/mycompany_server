@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors')
 const connectToDB = require('./database')
+const adminRouter = require('./router/admin/admin')
 const userRouter = require('./router/user/user')
 const authRouter = require('./router/auth/auth')
 const conversationRouter = require('./router/conversation/conversation')
 const auth_middleware =require('./middleware/auth_middleware')
+const auth_admin_middleware =require('./middleware/auth_admin_middleware')
 
 
-const app = express();
+const app = express(); 
 
 app.use(express.json());
 app.use(cors());
@@ -16,6 +18,7 @@ app.use(express.urlencoded({extended:false}));
 app.use('/' , authRouter) 
 app.use('/user' ,auth_middleware,userRouter )
 app.use('/conversation' ,auth_middleware,conversationRouter )
+app.use('/dashboard' ,auth_admin_middleware,adminRouter)
 
 
 app.listen(3333,'192.168.1.6',()=>{
@@ -26,4 +29,4 @@ app.listen(3333,'192.168.1.6',()=>{
 
     // console.log(new Date(1609933241006).toLocaleString('en' , {timeZone :'Egypt'}))
     connectToDB()
-})
+}) 

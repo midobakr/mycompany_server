@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
     userOne :{
             type:mongoose.Schema.Types.ObjectId,
-            ref:'User'
+            ref:'Employee'
       
     },
     lastUpdatedAt:{
