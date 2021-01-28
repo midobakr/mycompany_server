@@ -10,17 +10,21 @@ const Router = expres.Router()
 Router.get('/me' ,(req,res)=>{
     res.json(req.employee)
 })
-Router.get('/allEmployees' ,async (req,res)=>{
-    const employees = await Employee.find({})
-    console.log('60083f88b8cd731c284d0c45')
-    console.log(ObjectId())
-    // console.log(ObjectId({id :'60083f88b8cd731c284d0c45'}))
-    console.log(new ObjectId('60083f88b8cd731c284d0c45'))
-    
-    console.log(Mongoose.Types.ObjectId.isValid('60083f88b8cd731c284d0c45'))
-    console.log( Mongoose.Types.ObjectId('60083f88b8cd731c284d0c45'))
 
-    console.log(employees[0].id)
+Router.get('/registeredUsers' ,async (req,res)=>{
+    let date = new Date()
+    let firstDay = new Date(date.getFullYear(),date.getMonth(),date.getDate(),00)
+    let lastDay  = new Date(date.getFullYear(),date.getMonth(),date.getDate(),24)
+    
+    let today_record =await Registerion.find({AttendAt:{$gte:firstDay,$lte:lastDay}})
+    if(today_record[0]){
+        res.status(200).json(today_record)
+        return;
+    }
+    res.status(400).json({errors :[{msg : 'there is no Users registered yet !!'}]})})
+
+Router.get('/allEmployees' ,async (req,res)=>{
+    const employees = await Employee.find({})    
     res.json(employees)
 })
 Router.get('/employee/:id' ,async (req,res)=>{
@@ -29,10 +33,7 @@ Router.get('/employee/:id' ,async (req,res)=>{
         const employee = await Employee.findById(req.params['id'] ,'name email avatar dateOfEmployment')
         const employeeHistory = await Registerion.find({user_id: Mongoose.Types.ObjectId(req.params['id'])})
         const employeeconversation = await conversation.findOne({userOne : Mongoose.Types.ObjectId(req.params['id'])})
-        // console.log('kjbhvjkpl[l[/////////////' ,employeeconversation)
-        console.log('kjbhvjkpl[l[/////////////' ,employeeHistory)
-        console.log(req.params['id'])
- 
+   
         res.json({
             employee,
             history : employeeHistory,
