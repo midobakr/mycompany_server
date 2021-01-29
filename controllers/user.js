@@ -13,7 +13,7 @@ const getNotification = (req ,res)=>{
 
 const getAllrecords = async (req ,res)=>{
     
-    let records =await Attend.find({user_id:req.employee.id})
+    let records =await Attend.find({user_id:req.employee.id}).sort({ AttendAt: -1 })
     if(records){
         res.status(200).json(records)
         return;

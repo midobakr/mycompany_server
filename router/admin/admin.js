@@ -11,17 +11,22 @@ Router.get('/me' ,(req,res)=>{
     res.json(req.employee)
 })
 
-Router.get('/registeredUsers' ,async (req,res)=>{
-    let date = new Date()
+Router.get('/registeredUsers/:date' ,async (req,res)=>{
+    try{
+    let date = new Date(req.params['date'])
+    console.log(req.params['date'])
     let firstDay = new Date(date.getFullYear(),date.getMonth(),date.getDate(),00)
     let lastDay  = new Date(date.getFullYear(),date.getMonth(),date.getDate(),24)
     
-    let today_record =await Registerion.find({AttendAt:{$gte:firstDay,$lte:lastDay}})
-    if(today_record[0]){
+    let today_record =await Registerion.find({AttendAt:{$gte:firstDay,$lte:lastDay}}).sort({ name: 1 })
+    console.log(date)
+    console.log(firstDay)
+    console.log(lastDay)
         res.status(200).json(today_record)
-        return;
+    }catch(e){
+        res.status(400).json({errors :[{msg : 'there is Error !!'}]})
     }
-    res.status(400).json({errors :[{msg : 'there is no Users registered yet !!'}]})})
+})
 
 Router.get('/allEmployees' ,async (req,res)=>{
     const employees = await Employee.find({})    
