@@ -1,18 +1,27 @@
 const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    userOne :{
+    userOne :{ 
             type:mongoose.Schema.Types.ObjectId,
-            ref:'Employee'
+            ref:'employee'
       
     },
     lastUpdatedAt:{
         type:Date,
         default:Date.now()
     },
+    avatar :{
+        type :String
+    },
+    userName :{
+        type :String 
+    },
     
     messages :[{
-        from:{
+        from:{ 
+            type:String
+        },
+        name:{
             type:String
         },
         avatar:{

@@ -29,8 +29,11 @@ Router.post('/send' ,async (req ,res)=>{
          })}else{
           myConversation = new Conversation({
             userOne :req.employee.id,
+            avatar:req.employee.avatar,
+            name :req.employee.name,
             messages :[{
                 from:req.employee.id,
+                userName :req.employee.name,
                 avatar:req.employee.avatar,
                 content:req.body.theMessage
              }]
