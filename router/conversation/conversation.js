@@ -22,10 +22,12 @@ Router.post('/send' ,async (req ,res)=>{
          {userTwo:req.employee.id} 
         ]})
      if(myConversation){
+         myConversation.lastUpdatedAt=Date.now();
          myConversation.messages.push({
             from:req.employee.id,
             avatar:req.employee.avatar,
-            content:req.body.theMessage
+            content:req.body.theMessage,
+            name :req.employee.name
          })}else{
           myConversation = new Conversation({
             userOne :req.employee.id,

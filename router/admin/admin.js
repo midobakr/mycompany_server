@@ -31,12 +31,15 @@ Router.get('/allEmployees' ,async (req,res)=>{
 
 Router.get('/getMyInbox' ,async (req,res)=>{
   try{
-      console.log('working')
+      
+    console.log('working')
     const myInbox = await Conversation.find({},['userOne' ,'lastUpdatedAt' , 'avatar' , 'userName'])
+                        .sort({ lastUpdatedAt: -1 })
+
     res.json(myInbox)
 
   }catch(e){
-    console.log(e)
+    console.log(e) 
     res.status(400).json({errors :[{msg : 'sorry Error !!'}]})
 
   }    
@@ -58,6 +61,42 @@ Router.get('/employee/:id' ,async (req,res)=>{
         res.status(400).json({errors :[{msg : 'sorry Error !!'}]})
 
     }
+})
+Router.post('/send' ,async (req ,res)=>{
+    console.log('i am right there' , req.body)
+    let myConversation =await Conversation.findOne({userOne:req.body.id})
+     if(myConversation){
+        myConversation.lastUpdatedAt=Date.now();
+         myConversation.messages.push({
+            from:req.employee.id,
+            avatar:req.employee.avatar,
+            content:req.body.theMessage,
+            lastUpdatedAt:Date.now(),
+            name :req.employee.name,
+
+         })}else{
+          myConversation = new Conversation({
+            userOne :req.body.id,
+            avatar:req.body.avatar,
+            userName :req.body.name,
+            messages :[{
+                from:req.employee.id,
+                name :req.employee.name,
+                avatar:req.employee.avatar,
+                content:req.body.theMessage
+             }]
+          }) 
+         }
+         console.log('<<<<<<<<<<<<<<' ,myConversation,'>>>>>>>>>>>>>>>>>>>>')
+         await myConversation.save()
+         res.status(201).json(myConversation)   
+    console.log('/conversation`',myConversation)
+})
+Router.get('/myChat/:id' ,async (req ,res)=>{
+    console.log('i am right there' , req.body)
+    let myConversation =await Conversation.findOne({userOne:req.params['id']}) 
+        res.status(201).json(myConversation)   
+    console.log('/conversation`',myConversation)
 })
 
 
