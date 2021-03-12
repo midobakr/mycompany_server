@@ -1,9 +1,10 @@
-// const expres =require('express') 
-// const Router = expres.Router()
+const webpush = require('web-push')
 
+const Subscription = require('../models/subscription')
 const Attend = require('../models/registeration') 
+const Employee = require('../models/employee') 
 
-const getMe = (req ,res)=>{
+const getMe =async (req ,res)=>{
     res.json(req.employee)
 }
 const getNotification = (req ,res)=>{
@@ -53,6 +54,18 @@ const postRegister = async (req ,res)=>{
         AttendAt : new Date()
     })
         let done = await  today_record.save()
+        let admins = await Employee.find({admin: true}).select('_id')
+        let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
+        adminsSubscriptions.forEach((sub) => {
+            webpush.sendNotification(
+                sub,
+                JSON.stringify({
+                    title: `${req.employee.name} is here`,
+                    body: `${req.employee.name} is registered at ${new Date().toLocaleTimeString()} `,
+                    tag : 'registeredIn'
+                }))
+
+        })
         req.employee.notification.unshift({
             msg :'you are registerd today'
         })
@@ -60,6 +73,7 @@ const postRegister = async (req ,res)=>{
         res.status(200).json(done) 
    
 }catch(e){
+    console.log(e)
     res.status(400).json({errors :[{msg :'error happened'}]})
 }
 }
@@ -95,6 +109,18 @@ const postRegister = async (req ,res)=>{
             msg :'you are registerd out today'
         })
         req.employee.save()
+        let admins = await Employee.find({admin: true}).select('_id')
+    let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
+    adminsSubscriptions.forEach((sub) => {
+        webpush.sendNotification(
+            sub,
+            JSON.stringify({
+                title: `${req.employee.name} is out`,
+                body: `${req.employee.name} is registered out at ${new Date().toLocaleTimeString()} `,
+                tag : 'registeredIn'                
+            }))
+
+    })
         res.status(200).json(done) 
         
 }catch(e){

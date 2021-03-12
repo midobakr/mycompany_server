@@ -41,10 +41,6 @@ webpush.setVapidDetails(
 
 app.listen(3333,arr[arr.length-1].address,()=>{
     console.log('server is up on port : ',arr[arr.length-1].address)
-    // console.log(new Date(1609933241006).toLocaleString())
-    // console.log(new Date(1609933241006).toLocaleTimeString())
-    // console.log(new Date('2020-01-01'))
-
-    // console.log(new Date(1609933241006).toLocaleString('en' , {timeZone :'Egypt'}))
+  
     connectToDB()
 }) 
