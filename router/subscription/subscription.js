@@ -9,11 +9,17 @@ Router.post('/' ,async (req ,res)=>{
     console.log('i am right here in subscription')
     try{
       //TD check if there is same subscription before create new one
-        let userSubscription = new Subscription({
-              user_id : req.employee.id,
-              ...req.body
-          })
+      let userSubscription = await Subscription.find({user_id : req.employee.id , keys:req.body.keys})
+        console.log(userSubscription)
+        // console.log(userSubscription[0])
+      if(!userSubscription[0]){
+                userSubscription = new Subscription({
+                    user_id : req.employee.id,
+                    ...req.body
+                })
           await userSubscription.save()
+
+        }
         
      await  webpush.sendNotification(userSubscription , JSON.stringify({title : 'it is working' , tag:'in'}))
     }catch(e){

@@ -1,7 +1,10 @@
 const expres =require('express') 
+const webpush =require('web-push') 
 const Router = expres.Router()
 
 const Conversation = require('../../models/conversation')
+const Employee = require('../../models/employee')
+const Subscription = require('../../models/subscription')
 
 
 Router.get('/' ,async (req ,res)=>{
@@ -16,7 +19,6 @@ Router.get('/' ,async (req ,res)=>{
 })
 
 Router.post('/send' ,async (req ,res)=>{
-    console.log('i am right there' , req.body)
     let myConversation =await Conversation.findOne({ $or: [ 
          {userOne:req.employee.id},
          {userTwo:req.employee.id} 
@@ -41,10 +43,22 @@ Router.post('/send' ,async (req ,res)=>{
              }]
           }) 
          }
-         console.log('<<<<<<<<<<<<<<' ,myConversation,'>>>>>>>>>>>>>>>>>>>>')
          await myConversation.save()
          res.status(201).json(myConversation)   
-    console.log('/conversation`',myConversation)
+
+         let admins = await Employee.find({admin: true}).select('_id')
+         let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
+        console.log('admins' , adminsSubscriptions  )
+          adminsSubscriptions.forEach((sub) => {
+             webpush.sendNotification(
+                 sub,
+                 JSON.stringify({
+                     title: `${req.employee.name} sent a message`,
+                     body: req.body.theMessage,
+                     tag : `conversation${req.employee.id}`                
+                 }))
+     
+         })
 })
 
 

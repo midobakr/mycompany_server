@@ -1,8 +1,10 @@
 const expres =require('express') 
 const Mongoose = require('mongoose');
+const webpush = require('web-push');
 const Employee = require('../../models/employee')
 const Conversation = require('../../models/conversation')
 const Registerion = require('../../models/registeration')
+const Subscription = require('../../models/subscription')
 const conversation = require('../../models/conversation')
 const Router = expres.Router()
 
@@ -87,11 +89,19 @@ Router.post('/send' ,async (req ,res)=>{
              }]
           }) 
          }
-         console.log('<<<<<<<<<<<<<<' ,myConversation,'>>>>>>>>>>>>>>>>>>>>')
          await myConversation.save()
          res.status(201).json(myConversation)   
-    console.log('/conversation`',myConversation)
-})
+
+         let emplyeeSubscriptions =await Subscription.findOne({user_id:req.body.id})
+         console.log('admins' , emplyeeSubscriptions  )
+              webpush.sendNotification(
+                  emplyeeSubscriptions,
+                  JSON.stringify({
+                      title: `the manger ${req.employee.name} sent a message`,
+                      body: req.body.theMessage,
+                      tag : `conversation${req.employee.id}`                
+                  }))
+        })
 Router.get('/myChat/:id' ,async (req ,res)=>{
     console.log('i am right there' , req.body)
     let myConversation =await Conversation.findOne({userOne:req.params['id']}) 
