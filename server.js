@@ -1,4 +1,5 @@
 const OS = require('os')
+const Path = require('path')
 const express = require('express');
 const cors = require('cors')
 const webpush = require('web-push')
@@ -23,6 +24,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({extended:false}));
+app.use(express.static(Path.join(__dirname,'public' ,'build')));
 app.get('debug' ,()=>{
     console.log('workinggg')
 })
@@ -39,7 +41,8 @@ webpush.setVapidDetails(
 
 )
 
-app.listen(3333,arr[arr.length-1].address,()=>{
+//app.listen(3333,arr[arr.length-1].address,()=>{
+  app.listen(3333,()=>{
     console.log('server is up on port : ',arr[arr.length-1].address)
   
     connectToDB()
