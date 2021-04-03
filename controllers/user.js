@@ -67,7 +67,7 @@ const postRegister = async (req ,res)=>{
 
         })
         req.employee.notification.unshift({
-            msg :'you are registerd today'
+            msg :'you are registerd '
         })
         req.employee.save()
         res.status(200).json(done) 
@@ -106,7 +106,7 @@ const postRegister = async (req ,res)=>{
     today_record.LeftAt =new Date() 
         let done = await  today_record.save()
         req.employee.notification.unshift({
-            msg :'you are registerd out today'
+            msg :'you are registerd out '
         })
         req.employee.save()
         let admins = await Employee.find({admin: true}).select('_id')
