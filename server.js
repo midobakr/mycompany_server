@@ -42,8 +42,8 @@ webpush.setVapidDetails(
 )
 
 //app.listen(3333,arr[arr.length-1].address,()=>{
-  app.listen(3333,()=>{
-    console.log('server is up on port : ',arr[arr.length-1].address)
+  app.listen(process.env.PORT,()=>{
+//    console.log('server is up on port : ',arr[arr.length-1].address)
   
     connectToDB()
 }) 
