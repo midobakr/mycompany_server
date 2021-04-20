@@ -45,8 +45,8 @@ webpush.setVapidDetails(
 
 )
 
-app.listen(4444,arr[arr.length-1].address,()=>{
-//   app.listen(process.env.PORT,()=>{
+// app.listen(4444,arr[arr.length-1].address,()=>{
+  app.listen(process.env.PORT,()=>{
    console.log('server is up on port : ',arr[arr.length-1].address)
    console.log('server is up on port : ',process.env.PORT)
   
