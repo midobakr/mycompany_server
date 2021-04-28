@@ -15,9 +15,14 @@ let signupController = async (req , res)=>{
         return;
     }
     try {
+        const reservedUsername = await Employee.findOne({name : req.body.username})
+        if(reservedUsername){
+            res.status(400).json({errors :[{username : 'this name is taken'}]})
+            return;
+        }
         const reservedEmail = await Employee.findOne({email : req.body.email})
         if(reservedEmail){
-            res.status(400).json({errors :[{msg : 'this email is already registered'}]})
+            res.status(400).json({errors :[{email : 'this email is already registered'}]})
             return;
         }
         const salt = await bcrypt.genSalt(10)
@@ -47,7 +52,6 @@ let signupController = async (req , res)=>{
 }
 
 let loginController = async (req , res)=>{
-    console.log('okkkkkkk')
     console.log(req.body)
     const errors = validationResult(req);    
     if(!errors.isEmpty()){
@@ -58,13 +62,13 @@ let loginController = async (req , res)=>{
         const reservedEmail = await Employee.findOne({email : req.body.email})
         if(!reservedEmail){
         
-            res.status(400).json({errors :[{msg : 'this email is not registered'}]})
+            res.status(400).json({errors :[{email : 'this email is not registered'}]})
             return;
         }
         console.log(reservedEmail)
         const result = await bcrypt.compare(req.body.password , reservedEmail.password)
             if(!result){
-                res.status(400).json({errors :[{msg : 'wrong password'}]})          
+                res.status(400).json({errors :[{password : 'wrong password'}]})          
                 return ;
             }
             const token = jwt.sign({user_id: reservedEmail.id} , 'mysecret')

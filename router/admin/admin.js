@@ -90,7 +90,6 @@ Router.get('/employee/:id', async (req, res) => {
     }
 })
 Router.post('/send', async (req, res) => {
-    console.log('i am right there', req.body)
     let myConversation = await Conversation.findOne({
         userOne: req.body.id
     })
@@ -118,12 +117,19 @@ Router.post('/send', async (req, res) => {
         })
     }
     await myConversation.save()
+
     res.status(201).json(myConversation)
+
+    const employee= await Employee.findById(req.body.id)
+    employee.newNotifications +=1;
+    await employee.save()
+    console.log('-------------------------------------')
+    console.log(employee.newNotifications)
 
     let emplyeeSubscriptions = await Subscription.findOne({
         user_id: req.body.id
     })
-    console.log('admins', emplyeeSubscriptions)
+    // console.log('admins', emplyeeSubscriptions)
     webpush.sendNotification(
         emplyeeSubscriptions,
         JSON.stringify({

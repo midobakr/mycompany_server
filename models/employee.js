@@ -39,7 +39,11 @@ const schema = new mongoose.Schema({
             required : true
         }
 
-    }]
+    }], 
+    newNotifications :{
+        type : Number,
+        default :0
+    }
 
 })
 const employee = mongoose.model('employee' , schema);

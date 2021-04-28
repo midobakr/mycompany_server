@@ -7,14 +7,19 @@ const Employee = require('../models/employee')
 const getMe =async (req ,res)=>{
     res.json(req.employee)
 }
-const getNotification = (req ,res)=>{
-    console.log('getNotification' , req.employee)
+const getNotification =async (req ,res)=>{
+    req.employee.newNotifications = 0 
+    req.employee.save()
     res.json(req.employee.notification)
 }
 
 const getAllrecords = async (req ,res)=>{
-    
-    let records =await Attend.find({user_id:req.employee.id}).sort({ AttendAt: -1 })
+    const {year , month}= req.query
+    let records =await Attend.find({user_id:req.employee.id,
+        AttendAt:{
+            $gte:new Date(year , month , 1),
+            $lte:new Date(year , +month+1 , 1)}
+    }).sort({ AttendAt: -1 })
     if(records){
         res.status(200).json(records)
         return;
