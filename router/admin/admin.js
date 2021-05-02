@@ -15,7 +15,7 @@ Router.get('/me', (req, res) => {
 Router.get('/registeredUsers/:date', async (req, res) => {
     try {
         let date = new Date(req.params['date'])
-        console.log(req.params['date'])
+        // console.log(req.params['date'])
         let firstDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 00)
         let lastDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 24)
 
@@ -123,8 +123,8 @@ Router.post('/send', async (req, res) => {
     const employee= await Employee.findById(req.body.id)
     employee.newNotifications +=1;
     await employee.save()
-    console.log('-------------------------------------')
-    console.log(employee.newNotifications)
+    // console.log('-------------------------------------')
+    // console.log(employee.newNotifications)
 
     let emplyeeSubscriptions = await Subscription.findOne({
         user_id: req.body.id
@@ -140,12 +140,12 @@ Router.post('/send', async (req, res) => {
         
 })
 Router.get('/myChat/:id', async (req, res) => {
-    console.log('i am right there', req.body)
+    // console.log('i am right there', req.body)
     let myConversation = await Conversation.findOne({
         userOne: req.params['id']
     })
     res.status(201).json(myConversation)
-    console.log('/conversation`', myConversation)
+    // console.log('/conversation`', myConversation)
 })
 
 

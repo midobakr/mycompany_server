@@ -3,7 +3,6 @@ const Employee = require('../models/employee')
 
 let auth_middleware = async (req, res, next) => {
     let token = req.header('Authorization')
-    console.log(token)
     if (!token) {
 
         res.status(402).json({
@@ -14,9 +13,7 @@ let auth_middleware = async (req, res, next) => {
         return;
     }
     try {
-        console.log('token==>', token)
         let {user_id} = jwt.verify(token, 'mysecret')
-        console.log('user_id==>', user_id)
         const employee = await Employee.findById(user_id)
         if (!employee) {
             res.status(400).json({

@@ -8,9 +8,9 @@ const Subscription = require('../../models/subscription')
 
 
 Router.get('/' ,async (req ,res)=>{
-    console.log('i am right here')
+    // console.log('i am right here')
     let myConversations =await Conversation.findOne({userOne:req.employee.id })
-    console.log('/conversation`',myConversations)
+    // console.log('/conversation`',myConversations)
     if(myConversations ==null){
         res.status(400).json({errors :[{msg : 'no messages'}]})          
         return;
@@ -48,17 +48,17 @@ Router.post('/send' ,async (req ,res)=>{
 
          let admins = await Employee.find({admin: true}).select('_id')
          let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
-        console.log('admins' , adminsSubscriptions  )
-          adminsSubscriptions.forEach((sub) => {
-             webpush.sendNotification(
-                 sub,
-                 JSON.stringify({
-                     title: `${req.employee.name} sent a message`,
-                     body: req.body.theMessage,
-                     tag : `conversation${req.employee.id}`                
-                 }))
+        // console.log('admins' , adminsSubscriptions  )
+        //   adminsSubscriptions.forEach((sub) => {
+        //      webpush.sendNotification(
+        //          sub,
+        //          JSON.stringify({
+        //              title: `${req.employee.name} sent a message`,
+        //              body: req.body.theMessage,
+        //              tag : `conversation${req.employee.id}`                
+        //          }))
      
-         })
+        //  })
 })
 
 

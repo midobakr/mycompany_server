@@ -52,7 +52,7 @@ let signupController = async (req , res)=>{
 }
 
 let loginController = async (req , res)=>{
-    console.log(req.body)
+    // console.log(req.body)
     const errors = validationResult(req);    
     if(!errors.isEmpty()){
         res.status(400).json({errors:errors.array()})
@@ -65,7 +65,7 @@ let loginController = async (req , res)=>{
             res.status(400).json({errors :[{email : 'this email is not registered'}]})
             return;
         }
-        console.log(reservedEmail)
+        // console.log(reservedEmail)
         const result = await bcrypt.compare(req.body.password , reservedEmail.password)
             if(!result){
                 res.status(400).json({errors :[{password : 'wrong password'}]})          

@@ -6,11 +6,11 @@ const Subscription = require('../../models/subscription')
 
 
 Router.post('/' ,async (req ,res)=>{
-    console.log('i am right here in subscription')
+    // console.log('i am right here in subscription')
     try{
       //TD check if there is same subscription before create new one
       let userSubscription = await Subscription.find({user_id : req.employee.id , keys:req.body.keys})
-        console.log(userSubscription)
+        // console.log(userSubscription)
         // console.log(userSubscription[0])
       if(!userSubscription[0]){
                 userSubscription = new Subscription({
@@ -23,13 +23,13 @@ Router.post('/' ,async (req ,res)=>{
         
      await  webpush.sendNotification(userSubscription , JSON.stringify({title : 'it is working' , tag:'in'}))
     }catch(e){
-        console.log(e)
+        // console.log(e)
     }
     res.send('') 
 })
 
 Router.delete('/' ,async (req ,res)=>{
-    console.log('i am right here in subscription')
+    // console.log('i am right here in subscription')
     try{
       let userSubscription = await Subscription.deleteOne({user_id : req.employee.id , keys:req.body.keys})  
       let cv =    await  webpush.sendNotification(req.body , JSON.stringify({title : 'delete is working',
@@ -37,7 +37,7 @@ Router.delete('/' ,async (req ,res)=>{
       res.send('')
 
     }catch(e){
-        console.log(e)
+        // console.log(e)
     }
 })
 
