@@ -61,7 +61,7 @@ let onlineUsers = new Map();
 let ttt= 0;
 io.on('connection', socket => {
     ttt++
-    // console.log('num :',io.sockets.adapter.rooms)
+    console.log('num :',io.sockets.adapter.rooms)
      
     const user_id = socket.handshake.query.userId
     if (onlineUsers.has(user_id)) {
