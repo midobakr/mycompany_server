@@ -26,7 +26,7 @@ const app = express();
 const server = Http.createServer(app)
 const io = socketio(server, {
     cors: {
-        origin: ["http://192.168.1.6:3000", "http://localhost:3000"],
+        origin: ["http://192.168.1.6:3000", "http://localhost:3000",'http://192.168.1.6:3333'],
     }
 })
 
@@ -114,7 +114,8 @@ io.on('connection', socket => {
 
 // app.listen(3333,()=>{
 // server.listen(3333, '192.168.1.6', () => {
-      app.listen(process.env.PORT,()=>{
+// server.listen(3333, '192.168.1.6', () => {
+      server.listen(process.env.PORT,()=>{
     //    console.log('server is up on port : ',arr[arr.length-1].address)
     //    console.log('server is up on port : ',process.env.PORT)
 
