@@ -61,8 +61,8 @@ let onlineUsers = new Map();
 let ttt= 0;
 io.on('connection', socket => {
     ttt++
-    console.log('num :',io.sockets.adapter.rooms)
-     
+    // console.log('num :',io.sockets.adapter.rooms)
+    
     const user_id = socket.handshake.query.userId
     if (onlineUsers.has(user_id)) {
         let arr = onlineUsers.get(user_id)
@@ -80,14 +80,14 @@ io.on('connection', socket => {
             // socket.to("room1").to("room2").emit('send_message_from_admins',theReciever);
             console.log('my rooms2' , onlineUsers)
     })
-
+    
     socket.on('send_message_to_admins' ,async (theReciever)=>{
-            let admins =await Employee.find({admin: true}).select('_id')
-
-            // console.log('my adminsID' , admins)
-            admins.forEach(Admin => {
-                // console.log('test' ,typeof )
-                // console.log('test' , Admin._id)
+        let admins =await Employee.find({admin: true}).select('_id')
+        
+        // console.log('my adminsID' , admins)
+        admins.forEach(Admin => {
+            // console.log('test' ,typeof )
+            // console.log('test' , Admin._id)
             socket.to(onlineUsers.get(`${Admin._id}`)).emit('recieve_message',theReciever);
             theReciever.fromMe=true
             socket.emit('recieve_message_from_admin',theReciever);
@@ -109,14 +109,13 @@ io.on('connection', socket => {
         console.log('disconnect', onlineUsers)
     }) 
     // console.log('connect', onlineUsers)
-
+    
+    console.log('num :', socket.eventNames())
 })
 
-// app.listen(3333,()=>{
-// server.listen(3333, '192.168.1.6', () => {
 // server.listen(3333, '192.168.1.6', () => {
       server.listen(process.env.PORT,()=>{
-    //    console.log('server is up on port : ',arr[arr.length-1].address)
+        //    console.log('server is up on port : ',arr[arr.length-1].address)
     //    console.log('server is up on port : ',process.env.PORT)
 
     connectToDB()
