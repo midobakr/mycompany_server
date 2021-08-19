@@ -98,9 +98,9 @@ io.on('connection', socket => {
     // console.log('num :', socket.eventNames())
 })
 
-server.listen(3333, '192.168.1.8', () => {
+// server.listen(3333, '192.168.1.8', () => {
     // server.listen(3333, () => {
-    //   server.listen(process.env.PORT,()=>{
+server.listen(process.env.PORT,()=>{
     //    console.log('server is up on port : ',arr[arr.length-1].address)
     //    console.log('server is up on port : ',process.env.PORT)
     connectToDB()
