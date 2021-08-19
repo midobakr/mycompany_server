@@ -8,16 +8,23 @@ const Subscription = require('../../models/subscription')
 
 
 Router.get('/' ,async (req ,res)=>{
-    // console.log('i am right here')
-    let myConversations =await Conversation.findOne({userOne:req.employee.id })
-    // console.log('/conversation`',myConversations)
-    if(myConversations ==null){
+    let myConversation =await Conversation.findOne({userOne:req.employee.id })
+    if(myConversation ==null){
         res.status(400).json({errors :[{msg : 'no messages'}]})          
         return;
     }
-    res.status(200).json(myConversations)
+    myConversation.EmployeeUnseenMSGS = 0
+    res.status(200).json(myConversation)
+    myConversation.save()
 })
 
+Router.get('/unSeenMSGs' ,async (req ,res)=>{
+    let myConversation =await Conversation.findOne({userOne:req.employee.id})
+    if(!myConversation.EmployeeUnseenMSGS){
+        myConversation.EmployeeUnseenMSGS = 0
+    }
+    res.json(myConversation.EmployeeUnseenMSGS)
+})
 Router.post('/send' ,async (req ,res)=>{
     let myConversation =await Conversation.findOne({ $or: [ 
          {userOne:req.employee.id},
@@ -43,6 +50,9 @@ Router.post('/send' ,async (req ,res)=>{
              }]
           }) 
          }
+         myConversation.MangerUnseenMSGS +=1;
+         console.log('myConversation.MangerUnseenMSGS=>' , myConversation.MangerUnseenMSGS)
+
          await myConversation.save()
          res.status(201).json(myConversation)   
 

@@ -46,7 +46,8 @@ Router.get('/getMyInbox', async (req, res) => {
     try {
 
         console.log('working')
-        const myInbox = await Conversation.find({}, ['userOne', 'lastUpdatedAt', 'avatar', 'userName'])
+        // const myInbox = await Conversation.find({}, ['userOne', 'lastUpdatedAt', 'avatar', 'userName'])
+        const myInbox = await Conversation.find({}).slice('messages', -1)
             .sort({
                 lastUpdatedAt: -1
             })
@@ -116,38 +117,51 @@ Router.post('/send', async (req, res) => {
             }]
         })
     }
+    myConversation.EmployeeUnseenMSGS += 1
+    console.log('myConversation.EmployeeUnseenMSGS=>', myConversation.EmployeeUnseenMSGS)
     await myConversation.save()
 
     res.status(201).json(myConversation)
 
-    const employee= await Employee.findById(req.body.id)
-    employee.newNotifications +=1;
-    await employee.save()
+    // const employee= await Employee.findById(req.body.id)
+    // employee.newNotifications +=1;
+    // await employee.save()
     // console.log('-------------------------------------')
     // console.log(employee.newNotifications)
 
-    let emplyeeSubscriptions = await Subscription.findOne({
+    let employeeSubscriptions = await Subscription.findOne({
         user_id: req.body.id
     })
-    // console.log('admins', emplyeeSubscriptions)
-    webpush.sendNotification(
-        emplyeeSubscriptions,
-        JSON.stringify({
-            title: `the manger ${req.employee.name} sent a message`,
-            body: req.body.theMessage,
-            tag: `conversation${req.employee.id}`
-        }))
-        
+    console.log('admins', employeeSubscriptions)
+    if (employeeSubscriptions) {
+        webpush.sendNotification(
+            employeeSubscriptions,
+            JSON.stringify({
+                title: `the manger ${req.employee.name} sent a message`,
+                body: req.body.theMessage,
+                tag: `conversation${req.employee.id}`
+            }))
+    }
+
 })
 Router.get('/myChat/:id', async (req, res) => {
-    // console.log('i am right there', req.body)
     let myConversation = await Conversation.findOne({
         userOne: req.params['id']
     })
     res.status(201).json(myConversation)
-    // console.log('/conversation`', myConversation)
+    myConversation.MangerUnseenMSGS = 0
+    myConversation.save()
 })
 
 
 
+Router.get('/unSeenMSGs', async (req, res) => {
+    let records = await Conversation.find({}, ['MangerUnseenMSGS'])
+    let allUnseenMSGS = 0
+    records.forEach((record) => {
+        allUnseenMSGS += record.MangerUnseenMSGS
+    })
+    console.log('adminUnSeenMSGs:', allUnseenMSGS)
+    res.json(allUnseenMSGS)
+})
 module.exports = Router

@@ -13,6 +13,14 @@ const schema = new mongoose.Schema({
     avatar :{
         type :String
     },
+    EmployeeUnseenMSGS :{
+        type :Number,
+        default:0
+    },
+    MangerUnseenMSGS :{
+        type :Number,
+        default:0
+    },
     userName :{
         type :String 
     },

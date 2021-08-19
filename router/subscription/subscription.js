@@ -34,7 +34,7 @@ Router.delete('/' ,async (req ,res)=>{
       let userSubscription = await Subscription.deleteOne({user_id : req.employee.id , keys:req.body.keys})  
       let cv =    await  webpush.sendNotification(req.body , JSON.stringify({title : 'delete is working',
        tag:'in'}))
-      res.send('')
+      res.send('400')
 
     }catch(e){
         // console.log(e)

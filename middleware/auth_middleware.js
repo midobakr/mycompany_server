@@ -13,9 +13,9 @@ let auth_middleware = async (req, res, next) => {
         return;
     }
     try {
-        // console.log('token==>', token)
+        console.log('token==>', token)
         let {user_id} = jwt.verify(token, 'mysecret')
-        // console.log('user_id==>', user_id)
+        console.log('user_id==>', user_id)
         const employee = await Employee.findById(user_id)
         if (!employee) {
             res.status(400).json({

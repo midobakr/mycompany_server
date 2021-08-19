@@ -21,27 +21,22 @@ const Employee = require('./models/employee')
 const publicVapidKey = 'BGoYWF08O9yIeCH8ZB6jymtlhq54Wk8Lvit8i-UsMhJlh1el0UYiK0FsCTpQlM8wQ2G5ttLDzVNkByNZWtw-G4I';
 const privateVapidKey = 'GO4peDNzM_8wMdDPFSHH8lfEm-xqXX6ZVsDyxtL07to';
 
+let admins = [];
+Employee.find({admin: true}).select('_id').then(result=>{admins = result} )
 
 const app = express();
 const server = Http.createServer(app)
 const io = socketio(server, {
     cors: {
-        origin: ["http://192.168.1.6:3000", "http://localhost:3000",'http://192.168.1.6:3333'],
+        origin: ["http://192.168.1.6:3000", "http://localhost:3000",'http://192.168.1.8:3333','http://192.168.1.8:3000'],
     }
 })
 
 app.use(express.json());
 app.use(cors());
-app.use(express.urlencoded({
-    extended: false
-}));
+app.use(express.urlencoded({extended: false}));
 app.use(express.static(Path.join(__dirname, 'public', 'build')));
-app.get('/1234', (req, res) => {
-    res.json({
-        ff: req.ip
-    })
-
-})
+app.get('/1234', (req, res) => {res.json({ff: req.ip})})
 app.use('/', authRouter)
 app.use('/subscription', auth_middleware, subscriptionRouter)
 app.use('/user', auth_middleware, userRouter)
@@ -58,10 +53,8 @@ webpush.setVapidDetails(
 
 )
 let onlineUsers = new Map();
-let ttt= 0;
 io.on('connection', socket => {
-    ttt++
-    // console.log('num :',io.sockets.adapter.rooms)
+    console.log('num :',io.sockets.adapter.rooms)
     
     const user_id = socket.handshake.query.userId
     if (onlineUsers.has(user_id)) {
@@ -73,29 +66,21 @@ io.on('connection', socket => {
     } 
 
     socket.on('send_message_to_employee' , (theReciever)=>{
-            // console.log('myMSG' , onlineUsers.get(theReciever))
             socket.to(onlineUsers.get(theReciever.to)).emit('recieve_message_from_admin',theReciever);
             theReciever.fromMe=true
             socket.emit('recieve_message',theReciever);
-            // socket.to("room1").to("room2").emit('send_message_from_admins',theReciever);
-            console.log('my rooms2' , onlineUsers)
+            console.log('send_message_to_employee')
     })
     
-    socket.on('send_message_to_admins' ,async (theReciever)=>{
-        let admins =await Employee.find({admin: true}).select('_id')
-        
-        // console.log('my adminsID' , admins)
+    socket.on('send_message_to_admins' ,(theReciever)=>{
         admins.forEach(Admin => {
-            // console.log('test' ,typeof )
-            // console.log('test' , Admin._id)
             socket.to(onlineUsers.get(`${Admin._id}`)).emit('recieve_message',theReciever);
             theReciever.fromMe=true
             socket.emit('recieve_message_from_admin',theReciever);
-            
             });
+            console.log('send_message_to_admins')
     })
  
-    console.log('num :',ttt)
     console.log('my rooms' , onlineUsers)
 
     socket.on('disconnect', () => { 
@@ -110,13 +95,14 @@ io.on('connection', socket => {
     }) 
     // console.log('connect', onlineUsers)
     
-    console.log('num :', socket.eventNames())
+    // console.log('num :', socket.eventNames())
 })
 
-// server.listen(3333, '192.168.1.6', () => {
-      server.listen(process.env.PORT,()=>{
-        //    console.log('server is up on port : ',arr[arr.length-1].address)
+server.listen(3333, '192.168.1.8', () => {
+    // server.listen(3333, () => {
+    //   server.listen(process.env.PORT,()=>{
+    //    console.log('server is up on port : ',arr[arr.length-1].address)
     //    console.log('server is up on port : ',process.env.PORT)
-
     connectToDB()
-})
+
+})  
