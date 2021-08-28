@@ -15,7 +15,8 @@ let auth_middleware = async (req, res, next) => {
     }
     try {
         let {user_id} = jwt.verify(token, 'mysecret')
-        const employee = await Employee.findById(user_id) 
+        const employee = await Employee.findById(user_id)  ||
+                         await Admin.findById(user_id)
         if (!employee ){
             res.status(400).json({
                 errors: [{

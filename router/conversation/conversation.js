@@ -1,75 +1,15 @@
-const expres =require('express') 
-const webpush =require('web-push') 
+const expres = require('express')
 const Router = expres.Router()
 
-const Conversation = require('../../models/conversation')
-const Employee = require('../../models/employee')
-const Subscription = require('../../models/subscription')
+const {
+    getConversation,
+    getUnSeenMSGs,
+    postSend
+} = require('../../controllers/conversation')
 
-
-Router.get('/' ,async (req ,res)=>{
-    let myConversation =await Conversation.findOne({userOne:req.employee.id })
-    if(myConversation ==null){
-        res.status(400).json({errors :[{msg : 'no messages'}]})          
-        return;
-    }
-    myConversation.EmployeeUnseenMSGS = 0
-    res.status(200).json(myConversation)
-    myConversation.save()
-})
-
-Router.get('/unSeenMSGs' ,async (req ,res)=>{
-    let myConversation =await Conversation.findOne({userOne:req.employee.id})
-    if(!myConversation.EmployeeUnseenMSGS){
-        myConversation.EmployeeUnseenMSGS = 0
-    }
-    res.json(myConversation.EmployeeUnseenMSGS)
-})
-Router.post('/send' ,async (req ,res)=>{
-    let myConversation =await Conversation.findOne({ $or: [ 
-         {userOne:req.employee.id},
-         {userTwo:req.employee.id} 
-        ]})
-     if(myConversation){
-         myConversation.lastUpdatedAt=Date.now();
-         myConversation.messages.push({
-            from:req.employee.id,
-            avatar:req.employee.avatar,
-            content:req.body.theMessage,
-            name :req.employee.name
-         })}else{
-          myConversation = new Conversation({
-            userOne :req.employee.id,
-            avatar:req.employee.avatar,
-            name :req.employee.name,
-            messages :[{
-                from:req.employee.id,
-                userName :req.employee.name,
-                avatar:req.employee.avatar,
-                content:req.body.theMessage
-             }]
-          }) 
-         }
-         myConversation.MangerUnseenMSGS +=1;
-         console.log('myConversation.MangerUnseenMSGS=>' , myConversation.MangerUnseenMSGS)
-
-         await myConversation.save()
-         res.status(201).json(myConversation)   
-
-         let admins = await Employee.find({admin: true}).select('_id')
-         let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
-        // console.log('admins' , adminsSubscriptions  )
-        //   adminsSubscriptions.forEach((sub) => {
-        //      webpush.sendNotification(
-        //          sub,
-        //          JSON.stringify({
-        //              title: `${req.employee.name} sent a message`,
-        //              body: req.body.theMessage,
-        //              tag : `conversation${req.employee.id}`                
-        //          }))
-     
-        //  })
-})
+Router.get('/', getConversation)
+Router.get('/unSeenMSGs', getUnSeenMSGs)
+Router.post('/send', postSend)
 
 
 module.exports = Router

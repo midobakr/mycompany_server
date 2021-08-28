@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const Employee = require('../models/employee')
 const Admin = require('../models/admin')
 
-let auth_middleware = async (req, res, next) => {
+let getStatus = async (req, res) => {
     let token = req.header('Authorization')
     if (!token) {
 
@@ -15,21 +15,30 @@ let auth_middleware = async (req, res, next) => {
     }
     try {
         let {user_id} = jwt.verify(token, 'mysecret')
-        const employee = await Employee.findById(user_id) 
-        if (!employee ){
-            res.status(400).json({
-                errors: [{
-                    msg: 'invalid token'
-                }]
+        const employee = await Employee.findById(user_id)
+        if (employee) {
+            res.json({
+                status: 'employee'
+            })
+            return;
+        }
+        const admin = await Admin.findById(user_id)
+        if (admin) {
+            res.json({
+                status: 'admin'
             })
             return;
         }
 
-            req.employee = employee
 
-            next()
-    } catch (error) {
-        console.log('error in auth middlerware', error)
+        res.status(400).json({
+            errors: [{
+                msg: 'invalid token'
+            }]
+        })
+
+    }catch (error) {
+        console.log('error in getStatus', error)
         res.status(400).json({
             errors: [{
                 msg: 'invalid token'
@@ -41,4 +50,4 @@ let auth_middleware = async (req, res, next) => {
 }
 
 
-module.exports = auth_middleware
+module.exports = getStatus

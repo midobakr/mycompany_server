@@ -1,13 +1,13 @@
 const expres =require('express') 
 
-const auth_middleware = require('../../middleware/auth_middleware')
 const {signupController , signupValidator ,loginController, 
-        loginValidator} =require('../../controllers/auth/auth')
+        loginValidator , signupAdminValidator, signupAdminController} =require('../../controllers/auth')
 
 const Router = expres.Router()
 
 Router.post('/login',loginValidator,loginController)
 Router.post('/signup' , signupValidator, signupController)
+Router.post('/signup_admin' , signupAdminValidator, signupAdminController)
 
 
 module.exports = Router

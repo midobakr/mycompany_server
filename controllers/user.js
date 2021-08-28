@@ -3,6 +3,7 @@ const webpush = require('web-push')
 const Subscription = require('../models/subscription')
 const Attend = require('../models/registeration') 
 const Employee = require('../models/employee') 
+const Admin = require('../models/admin') 
 
 const getMe =async (req ,res)=>{
     res.json(req.employee)
@@ -12,7 +13,7 @@ const getNotification =async (req ,res)=>{
     req.employee.save()
     res.json(req.employee.notification)
 }
-
+ 
 const getAllrecords = async (req ,res)=>{
     const {year , month}= req.query
     let records =await Attend.find({user_id:req.employee.id,
@@ -59,7 +60,7 @@ const postRegister = async (req ,res)=>{
         AttendAt : new Date()
     })
         let done = await  today_record.save()
-        let admins = await Employee.find({admin: true}).select('_id')
+        let admins = await Admin.find({}).select('_id')
         let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
         adminsSubscriptions.forEach((sub) => {
             webpush.sendNotification(
@@ -88,6 +89,7 @@ const postRegister = async (req ,res)=>{
         let lastDay  = new Date(date.getFullYear(),date.getMonth(),date.getDate(),24)
         
         let today_record =await Attend.findOne({user_id:req.employee.id,LeftAt:{$gte:firstDay,$lte:lastDay}})
+        console.log('today record==>',today_record)
         if(today_record){
             res.status(200).json(today_record)
             return;
@@ -114,7 +116,7 @@ const postRegister = async (req ,res)=>{
             msg :'you are registerd out '
         })
         req.employee.save()
-        let admins = await Employee.find({admin: true}).select('_id')
+        let admins = await Admin.find({}).select('_id')
     let adminsSubscriptions =await Subscription.find({user_id:{$in : admins}})
     adminsSubscriptions.forEach((sub) => {
         webpush.sendNotification(
