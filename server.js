@@ -41,7 +41,7 @@ app.use('/conversation', auth_middleware, conversationRouter)
 app.use('/dashboard', auth_admin_middleware, adminRouter)
 app.get('/status', getStatus)
 app.get('/image/:name',(req,res)=>{res.sendFile(Path.join(__dirname, 'profile-pictures','index.png'))}) 
-app.get('/*', (req, res) => { res.sendFile(Path.join(__dirname, 'public', 'build', 'index.html'))})
+app.get('/*', (req, res) => { res.sendFile(Path.join(__dirname, 'public', 'index.html'))}) 
 app.post('/image',auth_all_middleware,upload.single('file'),(req,res)=>{res.status(200).json({saved: true})})
 app.post('/guest',guestController)
 
